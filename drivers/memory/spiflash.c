@@ -224,6 +224,24 @@ STATIC int mp_spiflash_write_page(mp_spiflash_t *self, uint32_t addr, size_t len
 /******************************************************************************/
 // Interface functions that go direct to the SPI flash device
 
+int mp_spiflash_erasechip(mp_spiflash_t *self) {
+    // enable writes
+    mp_spiflash_write_cmd(self, CMD_WREN);
+
+    // wait WEL=1
+    int ret = mp_spiflash_wait_wel1(self);
+    if (ret != 0) {
+        printf("flash busy\n");
+        return ret;
+    }
+    // erase the sector
+    printf("start erase...\n");
+    mp_spiflash_write_cmd(self, CMD_CHIP_ERASE);
+    printf("...\n");
+    // wait WIP=0
+    return mp_spiflash_wait_wip0(self);
+}
+
 int mp_spiflash_erase_block(mp_spiflash_t *self, uint32_t addr) {
     mp_spiflash_acquire_bus(self);
     int ret = mp_spiflash_erase_block_internal(self, addr);

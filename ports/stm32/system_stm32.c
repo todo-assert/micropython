@@ -414,10 +414,23 @@ void SystemClock_Config(void)
     RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
     RCC_OscInitStruct.HSEState = MICROPY_HW_CLK_HSE_STATE;
     RCC_OscInitStruct.HSIState = RCC_HSI_OFF;
+    #if MICROPY_HW_CLK_HSI
+    RCC_OscInitStruct.HSEState = RCC_HSE_OFF;
+    RCC_OscInitStruct.HSIState = RCC_HSI_ON;
+    /* if(HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK) {
+      __fatal_error("HAL_RCC_OscConfig");
+    }
+    */
+    RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
+    RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
+    #endif
     #if defined(STM32H7)
     RCC_OscInitStruct.CSIState = RCC_CSI_OFF;
     #endif
     RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+    #if MICROPY_HW_CLK_HSI
+    RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
+    #endif
     #elif defined(STM32L4)
     RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSE|RCC_OSCILLATORTYPE_MSI;
     RCC_OscInitStruct.LSEState = RCC_LSE_ON;
@@ -512,7 +525,20 @@ void SystemClock_Config(void)
     if(HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK) {
       __fatal_error("HAL_RCC_OscConfig");
     }
-
+    #if MICROPY_HW_CLK_LSI
+    RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSE;
+    RCC_OscInitStruct.LSEState = RCC_HSE_OFF;
+    RCC_OscInitStruct.LSIState = RCC_HSI_ON;
+    /*
+    if(HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK) {
+      __fatal_error("HAL_RCC_OscConfig");
+    }
+    */
+    RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSI;
+    if(HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK) {
+      __fatal_error("HAL_RCC_OscConfig");
+    }
+    #endif
 #if defined(STM32H7)
     /* PLL3 for USB Clock */
     PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_USB;

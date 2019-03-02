@@ -248,7 +248,15 @@ STATIC mp_obj_t machine_soft_reset(void) {
 MP_DEFINE_CONST_FUN_OBJ_0(machine_soft_reset_obj, machine_soft_reset);
 
 // Activate the bootloader without BOOT* pins.
+#if !MICROPY_DFU_MODE
+STATIC mp_obj_t machine_bootloader(size_t n_args, const mp_obj_t *args) {
+#else
 STATIC NORETURN mp_obj_t machine_bootloader(size_t n_args, const mp_obj_t *args) {
+#endif /* MICROPY_DFU_MODE */
+#if !MICROPY_DFU_MODE
+    printf("%s disabled bootloader mode !\n", MICROPY_HW_BOARD_NAME);
+    return mp_const_none;
+#else
     #if MICROPY_HW_ENABLE_USB
     pyb_usb_dev_deinit();
     #endif
@@ -309,6 +317,7 @@ STATIC NORETURN mp_obj_t machine_bootloader(size_t n_args, const mp_obj_t *args)
 #endif
 
     while (1);
+#endif /* MICROPY_DFU_MODE */
 }
 MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(machine_bootloader_obj, 0, 1, machine_bootloader);
 

@@ -42,7 +42,7 @@ OPENOCD ?= openocd
 OPENOCD_CONFIG ?= boards/openocd_stm32f4.cfg
 STARTUP_FILE ?= boards/startup_stm32$(MCU_SERIES).o
 
-CROSS_COMPILE = arm-none-eabi-
+CROSS_COMPILE ?= arm-none-eabi-
 
 INC += -I.
 INC += -I$(TOP)
@@ -210,6 +210,7 @@ DRIVERS_SRC_C = $(addprefix drivers/,\
 	dht/dht.c \
 	)
 
+
 SRC_C = \
 	main.c \
 	stm32_it.c \
@@ -243,7 +244,6 @@ SRC_C = \
 	wdt.c \
 	eth.c \
 	gccollect.c \
-	help.c \
 	machine_i2c.c \
 	machine_spi.c \
 	machine_uart.c \
@@ -256,6 +256,7 @@ SRC_C = \
 	network_lan.c \
 	modnetwork.c \
 	extint.c \
+	help.c \
 	usrsw.c \
 	rng.c \
 	rtc.c \
@@ -452,7 +453,7 @@ $(PY_BUILD)/formatfloat.o: COPT += -Os
 $(PY_BUILD)/parsenum.o: COPT += -Os
 $(PY_BUILD)/mpprint.o: COPT += -Os
 
-all: $(TOP)/lib/stm32lib/README.md $(BUILD)/firmware.dfu $(BUILD)/firmware.hex
+all: $(TOP)/lib/stm32lib/README.md $(BUILD)/firmware.dfu $(BUILD)/firmware.hex $(BUILD)/firmware.bin
 
 # For convenience, automatically fetch required submodules if they don't exist
 $(TOP)/lib/stm32lib/README.md:
@@ -532,6 +533,8 @@ $(BUILD)/firmware.elf: $(OBJ)
 	$(ECHO) "LINK $@"
 	$(Q)$(LD) $(LDFLAGS) -o $@ $^ $(LIBS)
 	$(Q)$(SIZE) $@
+$(BUILD)/firmware.bin:
+	$(OBJCOPY) -Obinary $(BUILD)/firmware.elf $(BUILD)/firmware.bin
 
 PLLVALUES = boards/pllvalues.py
 MAKE_PINS = boards/make-pins.py

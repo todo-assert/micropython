@@ -162,10 +162,13 @@ static const char fresh_main_py[] =
 "# main.py -- put your code here!\r\n"
 ;
 
+#if CONFIG_REFRESH_PYBCDC
 static const char fresh_pybcdc_inf[] =
 #include "genhdr/pybcdc_inf.h"
 ;
+#endif
 
+#if CONFIG_FRESH_README
 static const char fresh_readme_txt[] =
 "This is a MicroPython board\r\n"
 "\r\n"
@@ -180,6 +183,7 @@ static const char fresh_readme_txt[] =
 "\r\n"
 "Please visit http://micropython.org/help/ for further help.\r\n"
 ;
+#endif
 
 // avoid inlining to avoid stack usage within main()
 MP_NOINLINE STATIC bool init_flash_fs(uint reset_mode) {
@@ -218,15 +222,18 @@ MP_NOINLINE STATIC bool init_flash_fs(uint reset_mode) {
         // TODO check we could write n bytes
         f_close(&fp);
 
+#if CONFIG_REFRESH_PYBCDC
         // create .inf driver file
         f_open(&vfs_fat->fatfs, &fp, "/pybcdc.inf", FA_WRITE | FA_CREATE_ALWAYS);
         f_write(&fp, fresh_pybcdc_inf, sizeof(fresh_pybcdc_inf) - 1 /* don't count null terminator */, &n);
         f_close(&fp);
-
+#endif
+#if CONFIG_FRESH_README
         // create readme file
         f_open(&vfs_fat->fatfs, &fp, "/README.txt", FA_WRITE | FA_CREATE_ALWAYS);
         f_write(&fp, fresh_readme_txt, sizeof(fresh_readme_txt) - 1 /* don't count null terminator */, &n);
         f_close(&fp);
+#endif
 
         // keep LED on for at least 200ms
         systick_wait_at_least(start_tick, 200);
@@ -666,7 +673,7 @@ soft_reset:
 
     // reset config variables; they should be set by boot.py
     MP_STATE_PORT(pyb_config_main) = MP_OBJ_NULL;
-
+#if 1
     // run boot.py, if it exists
     // TODO perhaps have pyb.reboot([bootpy]) function to soft-reboot and execute custom boot.py
     if (reset_mode == 1 || reset_mode == 3) {
@@ -682,6 +689,7 @@ soft_reset:
             }
         }
     }
+#endif
 
     // turn boot-up LEDs off
     #if !defined(MICROPY_HW_LED2)
@@ -697,7 +705,6 @@ soft_reset:
     // Now we initialise sub-systems that need configuration from boot.py,
     // or whose initialisation can be safely deferred until after running
     // boot.py.
-
     #if MICROPY_HW_ENABLE_USB
     // init USB device to default setting if it was not already configured
     if (!(pyb_usb_flags & PYB_USB_FLAG_USB_MODE_CALLED)) {
@@ -723,6 +730,21 @@ soft_reset:
     #endif
 
     // At this point everything is fully configured and initialised.
+#if 0
+    led_init();
+while(1) {
+    led_state(1, 0);
+    led_state(2, 0);
+    led_state(3, 0);
+    led_state(4, 0);
+        mp_hal_delay_ms(1000);
+    led_state(1, 1);
+    led_state(2, 1);
+    led_state(3, 1);
+    led_state(4, 1);
+        mp_hal_delay_ms(1000);
+}
+#endif
 
     // Run the main script from the current directory.
     if ((reset_mode == 1 || reset_mode == 3) && pyexec_mode_kind == PYEXEC_MODE_FRIENDLY_REPL) {

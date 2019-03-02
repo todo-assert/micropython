@@ -20,8 +20,10 @@ INC +=  -I.
 INC +=  -I$(TOP)
 INC += -I$(BUILD)
 
+# INC += -I/home/lq/project/Allwinner/f1c600/source/Python-3.7.0b3/Modules/_ctypes/libffi_osx/include
+INC += -I/home/lq/project/Allwinner/f1c600/source/Python-3.7.0b3/Modules/_ctypes/libffi_msvc
 # compiler settings
-CWARN = -Wall -Werror
+# CWARN = -Wall -Werror
 CWARN += -Wpointer-arith -Wuninitialized
 CFLAGS = $(INC) $(CWARN) -std=gnu99 -DUNIX $(CFLAGS_MOD) $(COPT) $(CFLAGS_EXTRA)
 

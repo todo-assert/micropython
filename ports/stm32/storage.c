@@ -273,10 +273,16 @@ STATIC mp_obj_t pyb_flash_ioctl(mp_obj_t self, mp_obj_t cmd_in, mp_obj_t arg_in)
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_3(pyb_flash_ioctl_obj, pyb_flash_ioctl);
 
+STATIC mp_obj_t pyb_flash_erasechip(mp_obj_t self_in) {
+    return MP_OBJ_NEW_SMALL_INT(mp_spiflash_erasechip(&spi_bdev.spiflash));
+}
+STATIC MP_DEFINE_CONST_FUN_OBJ_1(pyb_flash_erasechip_obj, pyb_flash_erasechip);
+
 STATIC const mp_rom_map_elem_t pyb_flash_locals_dict_table[] = {
     { MP_ROM_QSTR(MP_QSTR_readblocks), MP_ROM_PTR(&pyb_flash_readblocks_obj) },
     { MP_ROM_QSTR(MP_QSTR_writeblocks), MP_ROM_PTR(&pyb_flash_writeblocks_obj) },
     { MP_ROM_QSTR(MP_QSTR_ioctl), MP_ROM_PTR(&pyb_flash_ioctl_obj) },
+    { MP_ROM_QSTR(MP_QSTR_erasechip), MP_ROM_PTR(&pyb_flash_erasechip_obj) },
 };
 
 STATIC MP_DEFINE_CONST_DICT(pyb_flash_locals_dict, pyb_flash_locals_dict_table);
