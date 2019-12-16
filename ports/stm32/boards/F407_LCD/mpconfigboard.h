@@ -1,7 +1,7 @@
 #define MICROPY_HW_BOARD_NAME       "OLIMEX STM32-E407"
 #define MICROPY_HW_MCU_NAME         "STM32F407"
 
-#define MICROPY_HW_HAS_SWITCH       (1)
+#define MICROPY_HW_HAS_SWITCH       (0)
 #define MICROPY_HW_HAS_FLASH        (1)
 #define MICROPY_HW_ENABLE_RNG       (1)
 #define MICROPY_HW_ENABLE_RTC       (1)
@@ -10,10 +10,10 @@
 #define MICROPY_HW_ENABLE_SDCARD    (1)
 
 // HSE is 12MHz
-#define MICROPY_HW_CLK_PLLM (12)
-#define MICROPY_HW_CLK_PLLN (336)
+#define MICROPY_HW_CLK_PLLM (8)
+#define MICROPY_HW_CLK_PLLN (432)
 #define MICROPY_HW_CLK_PLLP (RCC_PLLP_DIV2)
-#define MICROPY_HW_CLK_PLLQ (7)
+#define MICROPY_HW_CLK_PLLQ (9)
 
 // UART config
 #define MICROPY_HW_UART1_TX     (pin_B6)
@@ -62,10 +62,10 @@
 #define MICROPY_HW_USRSW_PIN        (pin_A0)
 #define MICROPY_HW_USRSW_PULL       (GPIO_NOPULL)
 #define MICROPY_HW_USRSW_EXTI_MODE  (GPIO_MODE_IT_RISING)
-#define MICROPY_HW_USRSW_PRESSED    (1)
+#define MICROPY_HW_USRSW_PRESSED    (0)
 
 // LEDs
-#define MICROPY_HW_LED1             (pin_C13)
+#define MICROPY_HW_LED1             (pin_A3)
 #define MICROPY_HW_LED_ON(pin)      (mp_hal_pin_low(pin))
 #define MICROPY_HW_LED_OFF(pin)     (mp_hal_pin_high(pin))
 
